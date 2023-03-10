@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.user.deleteMany();
-  await prisma.post.deleteMany();
 
   console.log('Seeding...');
 }

@@ -1,17 +1,28 @@
-import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
 import { AppModule } from './app/app.module';
-import type {
-  CorsConfig,
-  NestConfig,
-  SwaggerConfig,
-} from 'src/common/configs/config.interface';
+import {
+  ExpressAdapter,
+  NestExpressApplication,
+} from '@nestjs/platform-express';
+import * as env from 'env-var';
+
+const logger = new Logger('Application');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(),
+    {
+      logger: ['error', 'warn', 'log'],
+    }
+  );
 
   // Validation
   app.useGlobalPipes(new ValidationPipe());
@@ -24,28 +35,36 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
-  const configService = app.get(ConfigService);
-  const nestConfig = configService.get<NestConfig>('nest');
-  const corsConfig = configService.get<CorsConfig>('cors');
-  const swaggerConfig = configService.get<SwaggerConfig>('swagger');
+  const origin = env.get('ORIGIN').asString();
+  const port = env.get('SERVER_PORT').asInt();
+  const host = env.get('HOST').asString();
 
-  // Swagger Api
-  if (swaggerConfig.enabled) {
-    const options = new DocumentBuilder()
-      .setTitle(swaggerConfig.title || 'Nestjs')
-      .setDescription(swaggerConfig.description || 'The nestjs API description')
-      .setVersion(swaggerConfig.version || '1.0')
-      .build();
-    const document = SwaggerModule.createDocument(app, options);
+  const corsOrigin = {
+    origin,
+    credentials: true,
+  };
+  app.enableCors(corsOrigin);
+  app.setGlobalPrefix('api');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    })
+  );
+  const config = new DocumentBuilder()
+    .setTitle('workshop API')
+    .setDescription('The workshop API description')
+    .setVersion('1.0')
+    .build();
+  const swaggerOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  };
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document, swaggerOptions);
 
-    SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
-  }
-
-  // Cors
-  if (corsConfig.enabled) {
-    app.enableCors();
-  }
-
-  await app.listen(process.env.PORT || nestConfig.port || 3000);
+  await app.listen(port, host);
+  logger.log(`🚀 Application is running on: http://localhost:${port}/api`);
 }
 bootstrap();
