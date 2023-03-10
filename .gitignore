@@ -7,4 +7,5 @@ coverage/
 
 prisma/migrations/dev/
 .env
+.env.*
 .vercel
