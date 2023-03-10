@@ -3,8 +3,6 @@ env:
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 on:
   pull_request:
-    branches-ignore:
-      - wip/*
     branches: [main]
   push:
     branches: [main]
