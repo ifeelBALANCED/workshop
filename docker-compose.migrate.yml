@@ -11,7 +11,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres:13
+    image: postgres:15
     container_name: postgres
     restart: always
     ports:
@@ -23,4 +23,4 @@ services:
 
 volumes:
   postgres:
-    name: nest-db
+    name: workshop-db

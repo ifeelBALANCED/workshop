@@ -1,19 +1,19 @@
 version: '3.8'
 services:
   nest-api:
-    container_name: nest-api
+    container_name: workshop-api
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - '1776:1776'
     depends_on:
       - postgres
     env_file:
       - .env
 
   postgres:
-    image: postgres:13
+    image: postgres:15
     container_name: postgres
     restart: always
     ports:
@@ -25,4 +25,4 @@ services:
 
 volumes:
   postgres:
-    name: nest-db
+    name: workshop-db

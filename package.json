@@ -1,8 +1,8 @@
 {
-  "name": "nestjs-prisma-client-starter",
+  "name": "workshop",
   "version": "0.0.1",
-  "description": "NestJS Prisma Client Starter Project",
-  "author": "Marc Stammerjohann",
+  "description": "Workshop",
+  "author": "balanced",
   "license": "MIT",
   "keywords": [
     "nestjs",
@@ -14,17 +14,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/fivethree-team/nestjs-prisma-client-example.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fivethree-team/nestjs-prisma-client-example/issues"
+    "url": "https://github.com/ifeelBALANCED/workshop.git"
   },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -53,24 +49,18 @@
   },
   "dependencies": {
     "@devoxa/prisma-relay-cursor-connection": "2.2.2",
-    "@nestjs/apollo": "10.1.7",
     "@nestjs/common": "9.2.1",
     "@nestjs/config": "2.2.0",
     "@nestjs/core": "9.2.1",
-    "@nestjs/graphql": "10.1.7",
     "@nestjs/jwt": "10.0.1",
     "@nestjs/passport": "9.0.0",
     "@nestjs/platform-express": "9.2.1",
     "@nestjs/swagger": "6.1.4",
     "@prisma/client": "^4.9.0",
-    "apollo-server-express": "3.11.1",
     "bcrypt": "5.1.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
     "env-var": "^7.3.0",
-    "graphql": "16.6.0",
-    "graphql-scalars": "1.20.1",
-    "graphql-subscriptions": "2.0.0",
     "nestjs-prisma": "0.20.0",
     "passport": "0.6.0",
     "passport-jwt": "4.0.1",
@@ -91,6 +81,7 @@
     "@typescript-eslint/eslint-plugin": "5.48.2",
     "@typescript-eslint/parser": "5.48.2",
     "chance": "1.1.9",
+    "dotenv": "^16.0.3",
     "eslint": "8.32.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-plugin-prettier": "4.2.1",
