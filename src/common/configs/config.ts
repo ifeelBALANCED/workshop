@@ -6,9 +6,9 @@ export const corsOrigin = {
   credentials: true,
 };
 export const config = new DocumentBuilder()
-  .setTitle('workshop API')
-  .setDescription('The workshop API description')
-  .setVersion('1.0')
+  .setTitle('Median')
+  .setDescription('The Median API')
+  .setVersion('0.1')
   .build();
 export const swaggerOptions: SwaggerCustomOptions = {
   swaggerOptions: {
