@@ -5,6 +5,8 @@ import { PrismaModule } from 'nestjs-prisma';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ArticlesModule } from '../common/entities/articles/articles.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { ArticlesModule } from '../common/entities/articles/articles.module';
     ArticlesModule,
     CacheModule.register({ isGlobal: true }),
   ],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  controllers: [AppController],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, AppService],
 })
 export class AppModule {}

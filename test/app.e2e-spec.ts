@@ -1,21 +1,58 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { Chance } from 'chance';
-import { AppModule } from 'src/app/app.module';
-
-const chance = new Chance();
+import { useContainer } from 'class-validator';
+import { PrismaService } from 'nestjs-prisma';
+import { AppModule } from '../src/app/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let prisma: PrismaService;
+  const articleShape = expect.objectContaining({
+    id: expect.any(Number),
+    body: expect.any(String),
+    title: expect.any(String),
+    published: expect.any(Boolean),
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String),
+  });
 
-  beforeEach(async () => {
+  const articlesData = [
+    {
+      id: 100001,
+      title: 'title1',
+      description: 'description1',
+      body: 'body1',
+      published: true,
+    },
+    {
+      id: 100002,
+      title: 'title2',
+      description: 'description2',
+      body: 'body2',
+      published: false,
+    },
+  ];
+
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    prisma = app.get<PrismaService>(PrismaService);
+
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
     await app.init();
+
+    await prisma.article.create({
+      data: articlesData[0],
+    });
+    await prisma.article.create({
+      data: articlesData[1],
+    });
   });
 
   it('/ (GET)', () => {
@@ -23,13 +60,5 @@ describe('AppController (e2e)', () => {
       .get('/')
       .expect(200)
       .expect('Hello World!');
-  });
-
-  it('/hello/:name (GET)', () => {
-    const name = chance.name();
-    return request(app.getHttpServer())
-      .get(`/hello/${name}`)
-      .expect(200)
-      .expect(`Hello ${name}!`);
   });
 });
